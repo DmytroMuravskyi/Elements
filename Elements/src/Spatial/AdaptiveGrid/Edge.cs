@@ -7,18 +7,18 @@ using System.Text;
 namespace Elements.Spatial.AdaptiveGrid
 {
     /// <summary>
-    /// A unique edge in a adaptive grid, connecting two vertices. Don't have a particular direction.
-    /// Class is forked from CellComplex.Edge.
+    /// A unique edge in an adaptive grid, connecting two vertices. Doesn't have a particular direction.
+    /// This class is forked from CellComplex.Edge.
     /// </summary>
     public class Edge
     {
         /// <summary>
-        /// ID of start Vertex.
+        /// ID of the start Vertex.
         /// </summary>
         public ulong StartId;
 
         /// <summary>
-        /// ID of end Vertex.
+        /// ID of the end Vertex.
         /// </summary>
         public ulong EndId;
 

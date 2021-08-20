@@ -7,7 +7,7 @@ using System.Linq;
 namespace Elements.Spatial.AdaptiveGrid
 {
     /// <summary>
-    /// A graph like edge-vertex structure with planar spaces connected by vertical edges
+    /// A graph like edge-vertex structure with planar spaces connected by vertical edges.
     /// </summary>
     public class AdaptiveGrid
     {
@@ -65,7 +65,7 @@ namespace Elements.Spatial.AdaptiveGrid
         public double MinimumResolution { get; set; }
 
         /// <summary>
-        /// Transformation with which planar spaces are aligned
+        /// Transformation to align planar spaces.
         /// </summary>
         public Transform Transform { get; set; }
 
@@ -74,10 +74,10 @@ namespace Elements.Spatial.AdaptiveGrid
         #region Constructors
 
         /// <summary>
-        /// Create a AdaptiveGrid.
+        /// Create an AdaptiveGrid.
         /// </summary>
-        /// <param name="minimumResolution">Minimum step between vertices in U or V direction.</param>
-        /// <param name="transform">Transformation, grid is aligned with.</param>
+        /// <param name="minimumResolution">Minimum distance between vertices in U or V direction.</param>
+        /// <param name="transform">The Transform to align the grid.</param>
         /// <returns></returns>
         public AdaptiveGrid(double minimumResolution, Transform transform)
         {
@@ -90,12 +90,12 @@ namespace Elements.Spatial.AdaptiveGrid
         #region Public logic
 
         /// <summary>
-        /// Add graph section using bounding box, divided with step in each direction.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// Add graph section using bounding box, divided by stepSize in each direction.
+        /// If edges of new section are intersecting with edges of other existing regions
+        /// the two regions are connected.
         /// </summary>
-        /// <param name="bBox">Box which region is populated with graph.</param>
-        /// <param name="stepSize">Step, graph is populated with.</param>
+        /// <param name="bBox">The box that defines the region to add to the graph.</param>
+        /// <param name="stepSize">Step size to populate the graph.</param>
         public void AddFromBbox(BBox3 bBox, double stepSize)
         {
             var height = bBox.Max.Z - bBox.Min.Z;
@@ -110,10 +110,10 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Add graph section using bounding box, divided by a set of key points. 
+        /// Add regions to the grid using bounding box, divided by a set of key points.
         /// Key points don't respect "MinimumResolution" at the moment.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// If edges of new section are intersecting with edges of other existing regions
+        /// the two regions are connected.
         /// </summary>
         /// <param name="bBox">Box which region is populated with graph.</param>
         /// <param name="keyPoints">Set of 3D points, region is split with.</param>
@@ -131,9 +131,9 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Add graph section using polygon, extruded in given direction.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// Add regions to the grid using a polygon, extruded in given direction.
+        /// If edges of the new section intersect with edges of other existing regions
+        /// the two regions are connected.
         /// </summary>
         /// <param name="boundingPolygon">Base polygon</param>
         /// <param name="extrusionAxis">Extrusion direction</param>
@@ -174,13 +174,13 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Add graph section using polygon, extruded in given direction.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// Add regions to the grid section using polygon, extruded in given direction.
+        /// If edges of new the section intersect with edges of other existing regions
+        /// the two regions are connected.
         /// </summary>
         /// <param name="boundingPolygon">Base polygon</param>
-        /// <param name="extrusionAxis">Extrusion direction</param>
-        /// <param name="height">Height of polygon extrusion</param>
+        /// <param name="extrusionAxis">Extrusion direction.</param>
+        /// <param name="height">Height of polygon extrusion.</param>
         /// <param name="keyPoints">Set of 3D points, region is split with.</param>
         public void AddFromExtrude(Polygon boundingPolygon, Vector3 extrusionAxis, double height, List<Vector3> keyPoints)
         {
@@ -211,9 +211,9 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Add single planar region to the graph section using polygon.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// Add a single planar region to the graph section using a polygon.
+        /// If edges of the new section intersect with edges of the other existing regions
+        /// the two regions are connected.
         /// </summary>
         /// <param name="boundingPolygon">Base polygon</param>
         /// <param name="stepSize">Step with which region is divided in each direction</param>
@@ -233,12 +233,12 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Add single planar region to the graph section using polygon.
-        /// If edges of new section are intersecting with edges of other existing regions - 
-        /// two regions are connected.
+        /// Add a single planar region to the graph section using a polygon.
+        /// If edges of new section are intersecting with edges of other existing regions
+        /// the two regions are connected.
         /// </summary>
         /// <param name="boundingPolygon">Base polygon</param>
-        /// <param name="keyPoints">Set of 3D points, region is split with.</param>
+        /// <param name="keyPoints">Set of 3D points use to split the region.</param>
         /// <returns></returns>
         public HashSet<Edge> AddFromPolygon(Polygon boundingPolygon, IEnumerable<Vector3> keyPoints)
         {
@@ -250,7 +250,7 @@ namespace Elements.Spatial.AdaptiveGrid
         }
 
         /// <summary>
-        /// Intersect the box with existent edges and cut any portion of the edge, or whole edge,
+        /// Intersect the box with existing edges and cut any portion of the edge, or whole edge,
         /// that is inside the box. Note that no new connections are created afterwards.
         /// </summary>
         /// <param name="box">Boding box to subtract</param>
@@ -263,7 +263,7 @@ namespace Elements.Spatial.AdaptiveGrid
                 var end = GetVertex(edge.EndId);
                 PointOrientation startZ = OrientationTolerance(start.Point.Z, box.Min.Z, box.Max.Z);
                 PointOrientation endZ = OrientationTolerance(end.Point.Z, box.Min.Z, box.Max.Z);
-                if( startZ == endZ && startZ != PointOrientation.Inside)
+                if (startZ == endZ && startZ != PointOrientation.Inside)
                     continue;
 
                 PointOrientation startX = OrientationTolerance(start.Point.X, box.Min.X, box.Max.X);
@@ -294,9 +294,9 @@ namespace Elements.Spatial.AdaptiveGrid
                     List<Vector3> intersections;
                     edgeLine.Intersects(box, out intersections);
                     // Intersections are sorted from the start point.
-                    if( intersections.Count == 1 )
+                    if (intersections.Count == 1)
                     {
-                        //Need to find which end is inside the box. 
+                        //Need to find which end is inside the box.
                         //If none - we just touched the corner
                         if (startInside)
                         {
@@ -317,15 +317,15 @@ namespace Elements.Spatial.AdaptiveGrid
                             edgesToDelete.Add(edge);
                         }
                     }
-                    if( intersections.Count == 2 )
+                    if (intersections.Count == 2)
                     {
                         var v0 = AddVertex(intersections[0]);
-                        var v1 = AddVertex(intersections[1]); 
-                        if( edge.StartId != v0.Id)
+                        var v1 = AddVertex(intersections[1]);
+                        if (edge.StartId != v0.Id)
                         {
-                            AddEdge(edge.StartId, v0.Id);   
+                            AddEdge(edge.StartId, v0.Id);
                         }
-                        if( edge.EndId != v1.Id)
+                        if (edge.EndId != v1.Id)
                         {
                             AddEdge(v1.Id, edge.EndId);
                         }
@@ -357,7 +357,7 @@ namespace Elements.Spatial.AdaptiveGrid
         /// <returns></returns>
         public List<Vertex> GetVertices()
         {
-             return this._vertices.Values.ToList();
+            return this._vertices.Values.ToList();
         }
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace Elements.Spatial.AdaptiveGrid
         /// </summary>
         /// <param name="point"></param>
         /// <param name="id">The ID of the Vertex, if a match is found.</param>
-        /// <param name="fuzzyFactor">Amount of tolerance in the search against each component of the coordinate.</param>
+        /// <param name="fuzzyFactor">The spatial tolerance in the search for a vertext at the given point.</param>
         /// <returns></returns>
         public bool VertexExists(Vector3 point, out ulong id, double? fuzzyFactor = null)
         {
@@ -661,7 +661,8 @@ namespace Elements.Spatial.AdaptiveGrid
             var addedEdges = new HashSet<Edge>();
             var edgeCandidates = new HashSet<(ulong, ulong)>();
 
-            Action<Vector3, Vector3> add = (Vector3 start, Vector3 end) => {
+            Action<Vector3, Vector3> add = (Vector3 start, Vector3 end) =>
+            {
                 var v0 = AddVertex(start);
                 var v1 = AddVertex(end);
                 if (v0 != v1)
@@ -706,7 +707,7 @@ namespace Elements.Spatial.AdaptiveGrid
         private PointOrientation OrientationTolerance(double x, double start, double end)
         {
             PointOrientation po = PointOrientation.Inside;
-            if (x - start < Tolerance )
+            if (x - start < Tolerance)
                 po = PointOrientation.Low;
             else if (x - end > -Tolerance)
                 po = PointOrientation.Hi;
