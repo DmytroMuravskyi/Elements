@@ -28,12 +28,13 @@ namespace Elements.Spatial.AdaptiveGrid
             /// <param name="influence">How far it affects.</param>
             /// <param name="userDefined">Is user defined.</param>
             public RoutingHintLine(
-                Polyline polyline, double factor, double influence, bool userDefined)
+                Polyline polyline, double factor, double influence, bool userDefined, bool is3D)
             {
                 Polyline = polyline;
                 Factor = factor;
                 InfluenceDistance = influence;
                 UserDefined = userDefined;
+                Is3D = is3D;
             }
 
             /// <summary>
@@ -57,6 +58,8 @@ namespace Elements.Spatial.AdaptiveGrid
             /// User defined lines are preferred for input Vertex connection.
             /// </summary>
             public readonly bool UserDefined;
+
+            public readonly bool Is3D;
         }
 
         /// <summary>
@@ -1347,29 +1350,30 @@ namespace Elements.Spatial.AdaptiveGrid
 
         private bool IsAffectedBy(Vector3 start, Vector3 end, RoutingHintLine hint)
         {
-            var vs_2d = new Vector3(start.X, start.Y);
-            var ve_2d = new Vector3(end.X, end.Y);
-            //Vertical edges are not affected by hint lines
-            if (!vs_2d.IsAlmostEqualTo(ve_2d, _grid.Tolerance) &&
-                Math.Abs(start.Z - end.Z) < _grid.Tolerance)
+            var vs = hint.Is3D ? start : new Vector3(start.X, start.Y);
+            var ve = hint.Is3D ? end : new Vector3(end.X, end.Y);
+
+            //Vertical edges are not affected by 2D hint lines
+            if (!vs.IsAlmostEqualTo(ve, _grid.Tolerance) &&
+               (hint.Is3D || Math.Abs(start.Z - end.Z) < _grid.Tolerance))
             {
                 foreach (var segment in hint.Polyline.Segments())
                 {
                     double lowClosest = 1;
                     double hiClosest = 0;
 
-                    var dot = segment.Direction().Dot((ve_2d - vs_2d).Unitized());
+                    var dot = segment.Direction().Dot((ve - vs).Unitized());
                     if (!Math.Abs(dot).ApproximatelyEquals(1))
                     {
                         continue;
                     }
 
-                    if (vs_2d.DistanceTo(segment) < hint.InfluenceDistance)
+                    if (vs.DistanceTo(segment) < hint.InfluenceDistance)
                     {
                         lowClosest = 0;
                     }
 
-                    if (ve_2d.DistanceTo(segment) < hint.InfluenceDistance)
+                    if (ve.DistanceTo(segment) < hint.InfluenceDistance)
                     {
                         hiClosest = 1;
                     }
@@ -1379,12 +1383,12 @@ namespace Elements.Spatial.AdaptiveGrid
                         return true;
                     }
 
-                    var edgeLine2d = new Line(vs_2d, ve_2d);
+                    var edgeLine = new Line(vs, ve);
                     Action<Vector3> check = (Vector3 p) =>
                     {
-                        if (p.DistanceTo(edgeLine2d, out var closest) < hint.InfluenceDistance)
+                        if (p.DistanceTo(edgeLine, out var closest) < hint.InfluenceDistance)
                         {
-                            var t = (closest - vs_2d).Length() / edgeLine2d.Length();
+                            var t = (closest - vs).Length() / edgeLine.Length();
                             if (t < lowClosest)
                             {
                                 lowClosest = t;
@@ -1402,7 +1406,7 @@ namespace Elements.Spatial.AdaptiveGrid
 
                     var minResulution = Math.Max(_grid.Tolerance, hint.InfluenceDistance);
                     if (hiClosest > lowClosest &&
-                        (hiClosest - lowClosest) * edgeLine2d.Length() > minResulution)
+                        (hiClosest - lowClosest) * edgeLine.Length() > minResulution)
                     {
                         return true;
                     }

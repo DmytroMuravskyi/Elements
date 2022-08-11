@@ -246,8 +246,8 @@ namespace Elements.Tests
                 v => new Vector3(v.X, v.Y, configuration.MainLayer)));
 
             var hints = new List<RoutingHintLine>();
-            hints.Add(new RoutingHintLine(hintPolyline, 0.1, 0.2, true));
-            hints.Add(new RoutingHintLine(offsetPolyline, 0.5, 0.1, false));
+            hints.Add(new RoutingHintLine(hintPolyline, 0.1, 0.2, true, false));
+            hints.Add(new RoutingHintLine(offsetPolyline, 0.5, 0.1, false, false));
 
             var box = new BBox3(new Vector3(3, 6, 0), new Vector3(7, 7, 3));
             var obstacle = Obstacle.FromBBox(box);
@@ -409,9 +409,9 @@ namespace Elements.Tests
             }
 
             //9. Set configurations for hint and offset lines.
-            var hint = new RoutingHintLine(hintPolyline, 0.01, 0.1, true);
-            var offset1 = new RoutingHintLine(firstOffsetPolyline, 0.9, 0.1, false);
-            var offset2 = new RoutingHintLine(secondOffsetPolyline, 0.9, 0.1, false);
+            var hint = new RoutingHintLine(hintPolyline, 0.01, 0.1, true, false);
+            var offset1 = new RoutingHintLine(firstOffsetPolyline, 0.9, 0.1, false, false);
+            var offset2 = new RoutingHintLine(secondOffsetPolyline, 0.9, 0.1, false, false);
             var hints = new List<RoutingHintLine> { hint, offset1, offset2 };
 
             //10. Run algorithm
@@ -556,9 +556,9 @@ namespace Elements.Tests
             }
 
             //9. Set configurations for hint and offset lines. Split them into groups.
-            var hint = new RoutingHintLine(hintPolyline, 0.01, 0.1, true);
-            var offset1 = new RoutingHintLine(firstOffsetPolyline, 0.9, 0.1, false);
-            var offset2 = new RoutingHintLine(secondOffsetPolyline, 0.9, 0.1, false);
+            var hint = new RoutingHintLine(hintPolyline, 0.01, 0.1, true, false);
+            var offset1 = new RoutingHintLine(firstOffsetPolyline, 0.9, 0.1, false, false);
+            var offset2 = new RoutingHintLine(secondOffsetPolyline, 0.9, 0.1, false, false);
             var hints = new List<List<RoutingHintLine>>
             {
                 new List<RoutingHintLine>{ hint, offset1},
@@ -685,7 +685,7 @@ namespace Elements.Tests
             //6. Run routing with a hint line.
             var hint = new RoutingHintLine(
                 new Polyline(new Vector3[] { new Vector3(2, 2, 0), new Vector3(2, 8, 0) }),
-                0.1, 0.1, false);
+                0.1, 0.1, false, false);
             tree = alg.BuildSimpleNetwork(inputVertices, exits, new List<RoutingHintLine> { hint });
 
             //Find most efficient path from (0, 4) 
