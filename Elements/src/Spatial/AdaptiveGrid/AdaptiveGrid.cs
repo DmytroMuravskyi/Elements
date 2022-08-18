@@ -769,6 +769,13 @@ namespace Elements.Spatial.AdaptiveGrid
                 throw new ArgumentException("Can't create edge. End vertex id is not present in the grid.", $"{endId}");
             }
 
+            var hash = Edge.GetHash(new List<ulong> { startId, endId });
+            if (this._edgesLookup.TryGetValue(hash, out var edgeId))
+            {
+                _edges.TryGetValue(edgeId, out var edge);
+                return new List<Edge>() { edge };
+            }
+
             var sp = startVertex.Point;
             var ep = endVertex.Point;
             List<Edge> edgesToRemove = new List<Edge>();
